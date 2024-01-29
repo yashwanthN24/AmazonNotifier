@@ -1,6 +1,14 @@
 import sys
 import requests
 import smtplib
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+amazon_api_key = os.getenv("AMAZON_API_KEY")
+gmail_user = os.getenv("GMAIL_USER")
+gmail_password = os.getenv("GMAIL_PASSWORD")
 
 
 url = "https://amazon-product-data6.p.rapidapi.com/product-by-text"
@@ -11,7 +19,7 @@ def process():
     querystring = {"keyword": f"{search_url}","page":"1","country":"IN"}
 
     headers = {
-        "X-RapidAPI-Key": "7db4353802msh9d09f4b026c63b7p1de3e5jsn6bf9d4474d8c",
+        "X-RapidAPI-Key": amazon_api_key,
         "X-RapidAPI-Host": "amazon-product-data6.p.rapidapi.com"
     }
 
@@ -63,9 +71,9 @@ def process():
         message = f"{title} is now {price}"
         with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
             connection.starttls()
-            result = connection.login("yashwanthnaddana2002@gmail.com", "nydv qexs jsxy cxai")
+            result = connection.login(gmail_user, gmail_password)
             connection.sendmail(
-                from_addr="yashwanthnaddana2002@gmail.com",
+                from_addr=gmail_user,
                 to_addrs=send_mail,
                 msg=f"Subject:Amazon Price Alert!\n\n{message}\n{first_result['url']}".encode("utf-8")
             )
